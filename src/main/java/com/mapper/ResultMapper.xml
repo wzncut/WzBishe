@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ResultMapper">
+  <resultMap id="BaseResultMap" type="com.model.Result">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="sup" jdbcType="INTEGER" property="sup" />
+    <result column="conf" jdbcType="DOUBLE" property="conf" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from result
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.model.Result">
+    insert into result (id, sup, conf)
+    values (#{id,jdbcType=INTEGER}, #{sup,jdbcType=INTEGER}, #{conf,jdbcType=DOUBLE})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.model.Result">
+    update result
+    set sup = #{sup,jdbcType=INTEGER},
+      conf = #{conf,jdbcType=DOUBLE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="dropAll">
+    truncate table result;
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, sup, conf
+    from result
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, sup, conf
+    from result
+  </select>
+</mapper>
