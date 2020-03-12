@@ -11,14 +11,14 @@ public class MainTopKRules {
 
     public static void main(String [] arg) throws Exception{
         Database database = new Database();
-        database.loadFile(fileToPath("/mooc3.txt"));
-        int k = 200;
+        database.loadFile(fileToPath("/date.txt"));
+        int k = 100;
         double minConf = 0.4; //
         AlgoTopKRules algo = new AlgoTopKRules();
         algo.runAlgorithm(k, minConf, database);
         algo.printStats();
         algo.insertInDb();
-        algo.writeResultTofile(".//mooc.txt");
+        algo.writeResultTofile(".//date.txt");
     }
 
     public static String fileToPath(String filename) throws UnsupportedEncodingException{

@@ -2,8 +2,10 @@ package com.TopR.algo;
 
 import com.MybatisUtils;
 import com.TopR.tools.MemoryLogger;
+import com.alibaba.fastjson.JSON;
 import com.dao.ResultMapper;
 import com.model.Result;
+import com.sun.javafx.css.Rule;
 import org.apache.ibatis.session.SqlSession;
 
 import java.io.BufferedWriter;
@@ -150,6 +152,7 @@ public class AlgoTopKRules {
             }
         }
 
+        findRule(candidates);
         while (candidates.size() > 0) {
             RuleG rule = candidates.poll();
             if (rule.getAbsoluteSupport() < minsuppRelative) {
@@ -189,8 +192,12 @@ public class AlgoTopKRules {
 //            save(ruleLR, cardinality);
         }
 
-        if(ruleLR.getItemset1().length < maxAntecedentSize || ruleLR.getItemset2().length < maxConsequentSize	){
-            registerAsCandidate(true, ruleLR);
+        if(ruleLR.getItemset1().length < maxAntecedentSize || ruleLR.getItemset2().length < maxConsequentSize){
+
+            thisLift =confidenceIJ/((double) cardinality/(double) itemsnum);
+            if (thisLift>1) {
+                registerAsCandidate(true, ruleLR);
+            }
         }
 
         //反过来再得到所有1*1规则
@@ -208,7 +215,10 @@ public class AlgoTopKRules {
         }
 
         if(ruleRL.getItemset1().length < maxAntecedentSize || ruleRL.getItemset2().length < maxConsequentSize	){
-            registerAsCandidate(true, ruleRL);
+            thisLift =confidenceIJ/((double) cardinality/(double) itemsnum);
+            if (thisLift>1) {
+                registerAsCandidate(true, ruleRL);
+            }
         }
     }
 
@@ -579,5 +589,16 @@ public class AlgoTopKRules {
         }
 
         return false;
+    }
+
+    public void findRule(PriorityQueue<RuleG> candidates){
+        for (RuleG i : candidates){
+            for(RuleG j:candidates){
+                if (i.getItemset1()[0]==j.getItemset2()[0]&&i.getItemset2()[0]==j.getItemset1()[0]){
+//                    System.out.println(JSON.toJSONString(i));
+//                    System.out.println(JSON.toJSONString(j));
+                }
+            }
+        }
     }
 }
