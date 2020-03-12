@@ -16,77 +16,78 @@ import java.util.*;
 import java.util.Map.Entry;
 
 public class AlgoTopKRules {
-    /*
-    程序开始时间
+    /**
+     * 程序开始时间
      */
     long timeStart = 0;
-    /*
-    程序结束时间
+    /**
+     * 程序结束时间
      */
     long timeEnd = 0;
-    /*
-    最小置信度
+    /**
+     * 最小置信度
      */
     double minConfidence;
-    /*
-    规定返回结果数量
+    /**
+     * 规定返回结果数量
      */
     int k = 0;
-    /*
-    数据集
+    /**
+     * 数据集
      */
     Database database;
-    /*
-    最小支持度
+    /**
+     * 最小支持度
      */
     int minsuppRelative;
-    /*
-    数据集数据结构，统计个数用
+    /**
+     * 数据集数据结构，统计个数用
+     * 记录拥有该数据项的项集数组
      */
     BitSet[] tableItemTids;
-    /*
-    统计数据项个数
+    /**
+     * 统计数据项个数（支持度的分子）
      */
     int[] tableItemCount;
-    /*
-    结果集优先队列
+    /**
+     * 结果集优先队列
      */
     PriorityQueue<RuleG> kRules;
-    /*
-    候选集优先队列
+    /**
+     * 候选集优先队列
      */
     PriorityQueue<RuleG> candidates;
-    /*
-    最大候选数
+    /**
+     * 最大候选数
      */
     int maxCandidateCount = 0;
-    /*
-    启始项最大数量
+    /**
+     * 启始项最大数量
      */
     int maxAntecedentSize = Integer.MAX_VALUE;
-    /*
-    结束项最大数量
+    /**
+     * 结束项最大数量
      */
     int maxConsequentSize = Integer.MAX_VALUE;
 
-    /*
-    一共有几条数据
+    /**
+     * 一共有几条数据
      */
     int itemsnum=0;
-    /*
-     格式化
+    /**
+     * 格式化
      */
     DecimalFormat df=new DecimalFormat("0.00");
 
-    /*
-    b初始值
+    /**
+     * b初始值
      */
     Double thisLift=0.1;
 
     public AlgoTopKRules() {
     }
 
-    /*
+    /**
     算法开始
      */
     public void runAlgorithm(int k, double minConfidence, Database database) {
@@ -120,13 +121,14 @@ public class AlgoTopKRules {
         timeEnd = System.currentTimeMillis();
     }
 
-    /*
-    算法主逻辑
+    /**
+     * 算法主逻辑
      */
     private void start() {
         // 一个项走完再走另一个项
         main: for (int itemI = 0; itemI <= database.maxItem; itemI++) {
             //第一趟:把[0]赋值给tidsI
+            // tidI:itemI出现的项集集合。
             if (tableItemCount[itemI] < minsuppRelative) {
                 continue main;
             }
@@ -137,9 +139,10 @@ public class AlgoTopKRules {
                 }
 
                 //把[1]赋值给tidsJ
+                // tidJ:itemJ出现的项集集合。
                 BitSet tidsJ = tableItemTids[itemJ];
 
-                //共享事务集
+                //共享事务集,itemI,itemJ同时出现的项集集合
                 BitSet commonTids = (BitSet) tidsI.clone();
                 commonTids.and(tidsJ);
 
@@ -166,10 +169,15 @@ public class AlgoTopKRules {
         }
     }
 
-    /*
-        创建1*1规则
-        存入候选集合和结果集合
-        @cardinality:支持度
+    /**
+     * 创建1*1规则
+     * 存入候选集合和结果集合
+     * @param item1
+     * @param tid1
+     * @param item2
+     * @param tid2
+     * @param commonTids
+     * @param cardinality
      */
     private void generateRuleSize11(Integer item1, BitSet tid1, Integer item2, BitSet tid2, BitSet commonTids, int cardinality) {
         Integer[] itemset1 = new Integer[1];
@@ -193,9 +201,8 @@ public class AlgoTopKRules {
         }
 
         if(ruleLR.getItemset1().length < maxAntecedentSize || ruleLR.getItemset2().length < maxConsequentSize){
-
             thisLift =confidenceIJ/((double) cardinality/(double) itemsnum);
-            if (thisLift>1) {
+            if (thisLift>1){
                 registerAsCandidate(true, ruleLR);
             }
         }
@@ -222,9 +229,11 @@ public class AlgoTopKRules {
         }
     }
 
-    /*
+    /**
      * 讲规则插入到候选优先队列中
      * 并排序
+     * @param expandLR
+     * @param rule
      */
     private void registerAsCandidate(boolean expandLR, RuleG rule) {
         rule.expandLR = expandLR;
@@ -236,10 +245,11 @@ public class AlgoTopKRules {
         MemoryLogger.getInstance().checkMemory();
     }
 
-    /*
+    /**
      * expand过程
      * expandLR方法
-     * 先执行做扩展在进行右扩展，避免找到重复的规则
+     * 从候选项集中取，先执行左扩展在进行右扩展，避免找到重复的规则
+     * @param ruleG
      */
     private void expandLR(RuleG ruleG) {
         if(ruleG.getItemset2().length == maxConsequentSize && ruleG.getItemset1().length == maxAntecedentSize){
@@ -249,15 +259,17 @@ public class AlgoTopKRules {
         Map<Integer, BitSet> mapCountLeft = new HashMap<Integer, BitSet>();
         Map<Integer, BitSet> mapCountRight = new HashMap<Integer, BitSet>();
 
-        //遍历bitset中所有true位索引
+        //遍历I，J共同出现的事务集bitset中所有true位索引
         for (int tid = ruleG.common.nextSetBit(0); tid >= 0; tid = ruleG.common.nextSetBit(tid + 1)){
-            //定位同时出现Rule中项目的所有项集并扫描
+            //定位同时出现Rule中项目的所有项集并逐个遍历其中的项目
+            // tid：项集的索引
             Iterator<Integer> iter = database.getTransactions().get(tid).getItems().iterator();
 
             while (iter.hasNext()) {
                 //从大到小，之前已排好序
                 Integer item = iter.next();
 
+                //最大的小于，其他必小于，跳过此项集
                 if (item < ruleG.maxLeft && item < ruleG.maxRight) {
                     break;
                 }
@@ -326,7 +338,10 @@ public class AlgoTopKRules {
                     }
                     // register the rule as a candidate for future expansion
                     if(candidate.getItemset2().length < maxConsequentSize){
-                        registerAsCandidate(false, candidate);
+                        thisLift =confidence/(ruleSupport/(double) itemsnum);
+                        if (thisLift>1) {
+                            registerAsCandidate(false, candidate);
+                        }
                     }
                 }
             }
@@ -376,7 +391,10 @@ public class AlgoTopKRules {
                     // register the rule as a candidate for further expansions
                     if(candidate.getItemset1().length < maxAntecedentSize ||
                             candidate.getItemset2().length < maxConsequentSize	){
-                        registerAsCandidate(true, candidate);
+                        thisLift =confidence/(ruleSupport/(double) itemsnum);
+                        if (thisLift>1) {
+                            registerAsCandidate(true, candidate);
+                        }
                     }
                 }
             }
@@ -476,7 +494,10 @@ public class AlgoTopKRules {
                 }
                 // register the rule as a candidate for future expansion(s)
                 if(candidate.getItemset2().length < maxConsequentSize	){
-                    registerAsCandidate(false, candidate);
+                    thisLift =confidence/(ruleSupport/(double) itemsnum);
+                    if (thisLift>1) {
+                        registerAsCandidate(false, candidate);
+                    }
                 }
             }
         }
@@ -496,9 +517,10 @@ public class AlgoTopKRules {
         }
     }
 
-    /*
+    /**
      * 扫描数据集
      * 保存在内存中
+     * @param database
      */
     private void scanDatabase(Database database) {
         for (int j = 0; j < database.getTransactions().size(); j++) {
@@ -535,7 +557,8 @@ public class AlgoTopKRules {
             sqlSeesion.close();
         }
     }
-    /*
+
+    /**
      * 控制台打印算法的执行结束时间
      * 占用内存等信息
      */
@@ -548,8 +571,10 @@ public class AlgoTopKRules {
         System.out.println("===================================================");
     }
 
-    /*
+    /**
      * 把最后得到的规则写入TXT文件
+     * @param path
+     * @throws IOException
      */
     public void writeResultTofile(String path) throws IOException {
         // Prepare the file
@@ -574,6 +599,13 @@ public class AlgoTopKRules {
     }
 
 
+    /**
+     * 此方法检查项“item”是否在项集“itemset”中。
+     * @param itemset
+     * @param item
+     * @param maxItemInArray
+     * @return
+     */
     public static boolean containsLEX(Integer itemset[], Integer item, int maxItemInArray) {
         if (item > maxItemInArray) {
             return false;
