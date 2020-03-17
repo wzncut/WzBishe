@@ -58,32 +58,29 @@ public class AlgoTopKRules {
      */
     PriorityQueue<RuleG> candidates;
     /**
-     * 最大候选数
+     * 最小候选数
      */
     int maxCandidateCount = 0;
     /**
      * 启始项最大数量
      */
-    int maxAntecedentSize = Integer.MAX_VALUE;
+    int maxAntecedentSize = 1;
     /**
      * 结束项最大数量
      */
-    int maxConsequentSize = Integer.MAX_VALUE;
+    int maxConsequentSize = 1;
 
     /**
      * 一共有几条数据
      */
     int itemsnum=0;
-    /**
-     * 格式化
-     */
-    DecimalFormat df=new DecimalFormat("0.00");
 
     /**
      * b初始值
      */
-    Double thisLift=0.1;
+    double thisLift=0.1;
 
+    double minLift=10;
     public AlgoTopKRules() {
     }
 
@@ -155,7 +152,7 @@ public class AlgoTopKRules {
             }
         }
 
-        findRule(candidates);
+//        findRule(candidates);
         while (candidates.size() > 0) {
             RuleG rule = candidates.poll();
             if (rule.getAbsoluteSupport() < minsuppRelative) {
@@ -193,7 +190,7 @@ public class AlgoTopKRules {
         if (confidenceIJ >= minConfidence) {
 
             thisLift =confidenceIJ/((double) cardinality/(double) itemsnum);
-            if (thisLift>1){
+            if (thisLift>minLift){
                 save(ruleLR, cardinality);
             }
             //执行save
@@ -202,7 +199,7 @@ public class AlgoTopKRules {
 
         if(ruleLR.getItemset1().length < maxAntecedentSize || ruleLR.getItemset2().length < maxConsequentSize){
             thisLift =confidenceIJ/((double) cardinality/(double) itemsnum);
-            if (thisLift>1){
+            if (thisLift>minLift){
                 registerAsCandidate(true, ruleLR);
             }
         }
@@ -214,8 +211,8 @@ public class AlgoTopKRules {
 
         if (confidenceJI >= minConfidence) {
            thisLift = confidenceJI/(cardinality/(double) itemsnum);
-            if (thisLift>1){
-                save(ruleLR, cardinality);
+            if (thisLift>minLift){
+                save(ruleRL, cardinality);
             }
             //执行save
 //            save(ruleRL, cardinality);
@@ -223,7 +220,7 @@ public class AlgoTopKRules {
 
         if(ruleRL.getItemset1().length < maxAntecedentSize || ruleRL.getItemset2().length < maxConsequentSize	){
             thisLift =confidenceIJ/((double) cardinality/(double) itemsnum);
-            if (thisLift>1) {
+            if (thisLift>minLift) {
                 registerAsCandidate(true, ruleRL);
             }
         }
@@ -332,14 +329,14 @@ public class AlgoTopKRules {
                     if (confidence >= minConfidence) {
                         // save the rule in current top-k rules
                         thisLift =confidence/(ruleSupport/(double) itemsnum);
-                        if (thisLift>1) {
+                        if (thisLift>minLift) {
                             save(candidate, ruleSupport);
                         }
                     }
                     // register the rule as a candidate for future expansion
                     if(candidate.getItemset2().length < maxConsequentSize){
                         thisLift =confidence/(ruleSupport/(double) itemsnum);
-                        if (thisLift>1) {
+                        if (thisLift>minLift) {
                             registerAsCandidate(false, candidate);
                         }
                     }
@@ -384,7 +381,7 @@ public class AlgoTopKRules {
                     if (confidence >= minConfidence) {
                         // save the rule to the top-k rules
                         thisLift =confidence/(ruleSupport/(double) itemsnum);
-                        if (thisLift>1) {
+                        if (thisLift>minLift) {
                             save(candidate, ruleSupport);
                         }
                     }
@@ -392,7 +389,7 @@ public class AlgoTopKRules {
                     if(candidate.getItemset1().length < maxAntecedentSize ||
                             candidate.getItemset2().length < maxConsequentSize	){
                         thisLift =confidence/(ruleSupport/(double) itemsnum);
-                        if (thisLift>1) {
+                        if (thisLift>minLift) {
                             registerAsCandidate(true, candidate);
                         }
                     }
@@ -487,15 +484,15 @@ public class AlgoTopKRules {
                 if (confidence >= minConfidence) {
                     // save the rule to the current top-k rules
 //                    save(candidate, ruleSupport);
-                    thisLift = confidence / (ruleSupport / (double) itemsnum);
-                    if (thisLift > 1) {
+                   thisLift = confidence / (ruleSupport / (double) itemsnum);
+                    if (thisLift > minLift) {
                         save(candidate, ruleSupport);
                     }
                 }
                 // register the rule as a candidate for future expansion(s)
                 if(candidate.getItemset2().length < maxConsequentSize	){
                     thisLift =confidence/(ruleSupport/(double) itemsnum);
-                    if (thisLift>1) {
+                    if (thisLift>minLift) {
                         registerAsCandidate(false, candidate);
                     }
                 }
@@ -623,14 +620,56 @@ public class AlgoTopKRules {
         return false;
     }
 
+    public void evaluate(PriorityQueue<RuleG> result){
+
+    }
     public void findRule(PriorityQueue<RuleG> candidates){
-        for (RuleG i : candidates){
+
+//        Iterator<RuleG> it1 = candidates.iterator();
+//        Iterator<RuleG> it2 = candidates.iterator();
+//        flag1:while (it1.hasNext()){
+//            RuleG ruleG1=it1.next();
+//            while (it2.hasNext()){
+//                RuleG ruleG2=it2.next();
+//                if (ruleG1.getItemset1()[0].equals(ruleG2.getItemset2()[0])&&ruleG1.getItemset2()[0].equals(ruleG2.getItemset1()[0])){
+//                    Integer support=ruleG1.getAbsoluteSupport();
+//                    double conf1=ruleG1.getConfidence();
+//                    double conf2=ruleG2.getConfidence();
+//                    double kulc= (conf1+conf2)/2;
+//                    if (kulc<0.8){
+//                        it1.remove();
+//                        it2.remove();
+//                        continue flag1;
+//                    }
+//                }
+//            }
+//        }
+        List<RuleG> del = new ArrayList<>();
+        flag:for (RuleG i : candidates){
             for(RuleG j:candidates){
                 if (i.getItemset1()[0]==j.getItemset2()[0]&&i.getItemset2()[0]==j.getItemset1()[0]){
-//                    System.out.println(JSON.toJSONString(i));
-//                    System.out.println(JSON.toJSONString(j));
+                    Integer support=i.getAbsoluteSupport();
+//                    System.out.println(support);
+                    double confJ=j.getConfidence();
+                    double confI=i.getConfidence();
+                    double kulc= (confI+confJ)/2;
+//                    System.out.println(kulc);
+                    if (kulc<0.8){
+                        del.add(i);
+                        del.add(j);
+                        continue flag;
+                    }
+
+//                    Integer itemI = i.getItemset1()[0];
+//                    Integer itemJ = j.getItemset1()[0];
+
                 }
             }
         }
+        for (RuleG willDel:del){
+            candidates.remove(willDel);
+        }
+        System.out.println(JSON.toJSONString(candidates));
     }
+
 }
