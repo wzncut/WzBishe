@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.mooc_visualMapper">
+  <resultMap id="BaseResultMap" type="com.model.mooc_visual">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="source" jdbcType="VARCHAR" property="source" />
+    <result column="target" jdbcType="VARCHAR" property="target" />
+    <result column="sup" jdbcType="VARCHAR" property="sup" />
+    <result column="conf" jdbcType="VARCHAR" property="conf" />
+    <result column="group" jdbcType="INTEGER" property="group" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from mooc_visual
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.model.mooc_visual">
+    insert into mooc_visual (id, source, target, 
+      sup, conf, group)
+    values (#{id,jdbcType=INTEGER}, #{source,jdbcType=VARCHAR}, #{target,jdbcType=VARCHAR}, 
+      #{sup,jdbcType=VARCHAR}, #{conf,jdbcType=VARCHAR}, #{group,jdbcType=INTEGER})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.model.mooc_visual">
+    update mooc_visual
+    set source = #{source,jdbcType=VARCHAR},
+      target = #{target,jdbcType=VARCHAR},
+      sup = #{sup,jdbcType=VARCHAR},
+      conf = #{conf,jdbcType=VARCHAR},
+      group = #{group,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, source, target, sup, conf, group
+    from mooc_visual
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, source, target, sup, conf, group
+    from mooc_visual
+  </select>
+</mapper>

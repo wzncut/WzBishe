@@ -6,7 +6,7 @@ import java.util.List;
 public interface ResultMapper {
     int deleteByPrimaryKey(Integer id);
 
-    int insert(Result record);
+    int insert0(Result record);
 
     Result selectByPrimaryKey(Integer id);
 

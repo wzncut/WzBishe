@@ -10,7 +10,7 @@
     delete from result
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.model.Result">
+  <insert id="insert0" parameterType="com.model.Result">
     insert into result (id, sup, conf)
     values (#{id,jdbcType=INTEGER}, #{sup,jdbcType=INTEGER}, #{conf,jdbcType=DOUBLE})
   </insert>

@@ -4,7 +4,9 @@ import com.MybatisUtils;
 import com.TopR.tools.MemoryLogger;
 import com.alibaba.fastjson.JSON;
 import com.dao.ResultMapper;
+import com.dao.mooc_visualMapper;
 import com.model.Result;
+import com.model.mooc_visual;
 import com.sun.javafx.css.Rule;
 import org.apache.ibatis.session.SqlSession;
 
@@ -536,19 +538,19 @@ public class AlgoTopKRules {
         }
     }
 
-    public void insertInDb(){
+    public void insertInDb(int group){
         SqlSession sqlSeesion= MybatisUtils.getSqlSession();
-        ResultMapper resultMapper=sqlSeesion.getMapper(ResultMapper.class);
-        resultMapper.dropAll();
+        mooc_visualMapper moocVisualMapper = sqlSeesion.getMapper(mooc_visualMapper.class);
+//        ResultMapper resultMapper=sqlSeesion.getMapper(ResultMapper.class);
+//        resultMapper.dropAll();
         if(kRules.size() > 0){
             Object[] rules = kRules.toArray();
             Arrays.sort(rules);
             for(Object ruleObj : rules){
                 RuleG rule = (RuleG) ruleObj;
-                Result result=new Result();
-                result.setSup(rule.getAbsoluteSupport());
-                result.setConf(rule.getConfidence());
-                resultMapper.insert(result);
+                mooc_visual result=new mooc_visual();
+                result.setSource(rule.getItemset1());
+                moocVisualMapper.insert(result);
             }
             sqlSeesion.commit();
             sqlSeesion.close();

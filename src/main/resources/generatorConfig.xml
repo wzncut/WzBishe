@@ -15,7 +15,7 @@
         </commentGenerator>
 
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://localhost:3306/bishe?useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=false&amp;serverTimezone = GMT"
+                        connectionURL="jdbc:mysql://localhost:3306/guns?useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=false&amp;serverTimezone = GMT"
                         userId="root"
                         password="123456">
         </jdbcConnection>
@@ -45,7 +45,7 @@
         </javaClientGenerator>
 
         <!--对应数据库表名 -->
-        <table schema="test" tableName="result" domainObjectName="Result" enableCountByExample="false"
+        <table schema="guns" tableName="mooc_nodes" domainObjectName="mooc_nodes" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false"></table>
     </context>
