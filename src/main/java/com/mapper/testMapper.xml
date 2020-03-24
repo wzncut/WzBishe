@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.testMapper">
+  <resultMap id="BaseResultMap" type="com.model.test">
+    <id column="aaa" jdbcType="INTEGER" property="aaa" />
+    <result column="bbb" jdbcType="VARCHAR" property="bbb" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from test
+    where aaa = #{aaa,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.model.test">
+    insert into test (aaa, bbb)
+    values (#{aaa,jdbcType=INTEGER}, #{bbb,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.model.test">
+    update test
+    set bbb = #{bbb,jdbcType=VARCHAR}
+    where aaa = #{aaa,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select aaa, bbb
+    from test
+    where aaa = #{aaa,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select aaa, bbb
+    from test
+  </select>
+</mapper>

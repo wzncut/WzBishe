@@ -3,38 +3,40 @@
 <mapper namespace="com.dao.mooc_visualMapper">
   <resultMap id="BaseResultMap" type="com.model.mooc_visual">
     <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="source" jdbcType="VARCHAR" property="source" />
+    <result column="sources" jdbcType="VARCHAR" property="sources" />
     <result column="target" jdbcType="VARCHAR" property="target" />
     <result column="sup" jdbcType="VARCHAR" property="sup" />
     <result column="conf" jdbcType="VARCHAR" property="conf" />
-    <result column="group" jdbcType="INTEGER" property="group" />
+    <result column="catycray" jdbcType="INTEGER" property="catycray" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from mooc_visual
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.model.mooc_visual">
-    insert into mooc_visual (id, source, target, 
-      sup, conf, group)
-    values (#{id,jdbcType=INTEGER}, #{source,jdbcType=VARCHAR}, #{target,jdbcType=VARCHAR}, 
-      #{sup,jdbcType=VARCHAR}, #{conf,jdbcType=VARCHAR}, #{group,jdbcType=INTEGER})
+    insert into mooc_visual (id, sources, target, 
+      sup, conf, catycray
+      )
+    values (#{id,jdbcType=INTEGER}, #{sources,jdbcType=VARCHAR}, #{target,jdbcType=VARCHAR}, 
+      #{sup,jdbcType=VARCHAR}, #{conf,jdbcType=VARCHAR}, #{catycray,jdbcType=INTEGER}
+      )
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.model.mooc_visual">
     update mooc_visual
-    set source = #{source,jdbcType=VARCHAR},
+    set sources = #{sources,jdbcType=VARCHAR},
       target = #{target,jdbcType=VARCHAR},
       sup = #{sup,jdbcType=VARCHAR},
       conf = #{conf,jdbcType=VARCHAR},
-      group = #{group,jdbcType=INTEGER}
+      catycray = #{catycray,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select id, source, target, sup, conf, group
+    select id, sources, target, sup, conf, catycray
     from mooc_visual
     where id = #{id,jdbcType=INTEGER}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
-    select id, source, target, sup, conf, group
+    select id, sources, target, sup, conf, catycray
     from mooc_visual
   </select>
 </mapper>

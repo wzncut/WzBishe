@@ -7,7 +7,9 @@ public class mooc_nodes {
 
     private String projectname;
 
-    private String count;
+    private Integer projectcount;
+
+    private Integer catycray;
 
     public Integer getId() {
         return id;
@@ -33,11 +35,19 @@ public class mooc_nodes {
         this.projectname = projectname == null ? null : projectname.trim();
     }
 
-    public String getCount() {
-        return count;
+    public Integer getProjectcount() {
+        return projectcount;
     }
 
-    public void setCount(String count) {
-        this.count = count == null ? null : count.trim();
+    public void setProjectcount(Integer projectcount) {
+        this.projectcount = projectcount;
+    }
+
+    public Integer getCatycray() {
+        return catycray;
+    }
+
+    public void setCatycray(Integer catycray) {
+        this.catycray = catycray;
     }
 }

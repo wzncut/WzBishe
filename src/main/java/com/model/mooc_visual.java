@@ -3,7 +3,7 @@ package com.model;
 public class mooc_visual {
     private Integer id;
 
-    private String source;
+    private String sources;
 
     private String target;
 
@@ -11,7 +11,7 @@ public class mooc_visual {
 
     private String conf;
 
-    private Integer group;
+    private Integer catycray;
 
     public Integer getId() {
         return id;
@@ -21,12 +21,12 @@ public class mooc_visual {
         this.id = id;
     }
 
-    public String getSource() {
-        return source;
+    public String getSources() {
+        return sources;
     }
 
-    public void setSource(String source) {
-        this.source = source == null ? null : source.trim();
+    public void setSources(String sources) {
+        this.sources = sources == null ? null : sources.trim();
     }
 
     public String getTarget() {
@@ -53,11 +53,11 @@ public class mooc_visual {
         this.conf = conf == null ? null : conf.trim();
     }
 
-    public Integer getGroup() {
-        return group;
+    public Integer getCatycray() {
+        return catycray;
     }
 
-    public void setGroup(Integer group) {
-        this.group = group;
+    public void setCatycray(Integer catycray) {
+        this.catycray = catycray;
     }
 }

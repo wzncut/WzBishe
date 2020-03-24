@@ -26,5 +26,8 @@
 
     <mappers>
         <mapper resource="com/mapper/ResultMapper.xml"/>
+        <mapper resource="com/mapper/mooc_visualMapper.xml"/>
+        <mapper resource="com/mapper/mooc_nodesMapper.xml"/>
+        <mapper resource="com/mapper/testMapper.xml"/>
     </mappers>
 </configuration>

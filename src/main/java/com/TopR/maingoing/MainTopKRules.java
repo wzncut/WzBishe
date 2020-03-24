@@ -2,30 +2,38 @@ package com.TopR.maingoing;
 
 import com.TopR.algo.AlgoTopKRules;
 import com.TopR.algo.Database;
-
+import com.TopR.tools.CountTools;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.util.BitSet;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class MainTopKRules {
 
-
     public static void main(String [] arg) throws Exception{
+        int k = 50;
+        double minConf = 0.6; //
+        Map<Integer,BitSet[]> count = new HashMap<>();
+        AlgoTopKRules algo = new AlgoTopKRules();
         for (int i=0;i<8;i++) {
             Database database = new Database();
             database.loadFile(fileToPath("/groupOutPut" + i + ".txt"));
-            int k = 50;
-            double minConf = 0.6; //
-            AlgoTopKRules algo = new AlgoTopKRules();
             System.out.println("-------------------算法运行中-------------------");
-            algo.runAlgorithm(k, minConf, database);
+            algo.runAlgorithm(k, minConf, database,count,i);
             System.out.println("-------------------算法运行完毕-------------------");
             algo.printStats();
-//          algo.insertInDb();
             System.out.println("-------------------结果写入文件-------------------");
             algo.writeResultTofile(".//result" + i + ".txt");
             System.out.println("-------------------写入文件完毕-------------------");
+            System.out.println("-------------------写入数据库-------------------");
+//            algo.insertVisual(i);
+            System.out.println("-------------------写入数据库完毕-------------------");
         }
+        CountTools countTools =new CountTools();
+        countTools.countNodes(count);
+        System.out.println("over");
     }
 
     public static String fileToPath(String filename) throws UnsupportedEncodingException{

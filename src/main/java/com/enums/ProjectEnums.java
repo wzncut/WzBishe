@@ -66,6 +66,6 @@ public enum ProjectEnums {
     PROJECTS55(55,"Oracle"),
     PROJECTS56(56,"SQL_Server");
 
-    private int projectId;
+    private int projectId ;
     private String projectName;
 }

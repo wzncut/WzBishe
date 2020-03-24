@@ -4,8 +4,11 @@ import com.MybatisUtils;
 import com.TopR.tools.MemoryLogger;
 import com.alibaba.fastjson.JSON;
 import com.dao.ResultMapper;
+import com.dao.mooc_nodesMapper;
 import com.dao.mooc_visualMapper;
+import com.enums.ProjectEnums;
 import com.model.Result;
+import com.model.mooc_nodes;
 import com.model.mooc_visual;
 import com.sun.javafx.css.Rule;
 import org.apache.ibatis.session.SqlSession;
@@ -89,7 +92,7 @@ public class AlgoTopKRules {
     /**
     算法开始
      */
-    public void runAlgorithm(int k, double minConfidence, Database database) {
+    public void runAlgorithm(int k, double minConfidence, Database database,Map<Integer,BitSet[]> count,int i) {
         MemoryLogger.getInstance().reset();
         maxCandidateCount = 0;
 
@@ -101,6 +104,7 @@ public class AlgoTopKRules {
         this.minsuppRelative = 1;
         tableItemTids = new BitSet[database.maxItem + 1];
         tableItemCount = new int[database.maxItem + 1];
+
         kRules = new PriorityQueue<RuleG>();
         candidates = new PriorityQueue<RuleG>(new Comparator<RuleG>(){
             @Override
@@ -113,6 +117,8 @@ public class AlgoTopKRules {
         if(maxAntecedentSize >=1 && maxConsequentSize >=1){
             //扫描数据库存入数据结构
             scanDatabase(database);
+            //TODO 测试算法性能注释掉下行
+            count.put(i,tableItemTids);
             //主算法逻辑
             start();
         }
@@ -538,7 +544,7 @@ public class AlgoTopKRules {
         }
     }
 
-    public void insertInDb(int group){
+    public void insertVisual(int group){
         SqlSession sqlSeesion= MybatisUtils.getSqlSession();
         mooc_visualMapper moocVisualMapper = sqlSeesion.getMapper(mooc_visualMapper.class);
 //        ResultMapper resultMapper=sqlSeesion.getMapper(ResultMapper.class);
@@ -548,15 +554,40 @@ public class AlgoTopKRules {
             Arrays.sort(rules);
             for(Object ruleObj : rules){
                 RuleG rule = (RuleG) ruleObj;
-                mooc_visual result=new mooc_visual();
-                result.setSource(rule.getItemset1());
-                moocVisualMapper.insert(result);
+                mooc_visual req=new mooc_visual();
+                req.setSources(judge(rule.getItemset1()[0]));
+                req.setTarget(judge(rule.getItemset2()[0]));
+                req.setCatycray(group);
+                req.setSup(String.valueOf(rule.getAbsoluteSupport()));
+                req.setConf(String.valueOf(rule.getConfidence()));
+                moocVisualMapper.insert(req);
             }
             sqlSeesion.commit();
             sqlSeesion.close();
         }
     }
 
+    public void insertNodes(){
+        SqlSession sqlSeesion= MybatisUtils.getSqlSession();
+        mooc_nodesMapper moocNodesMapper = sqlSeesion.getMapper(mooc_nodesMapper.class);
+        if(kRules.size() > 0){
+            Object[] rules = kRules.toArray();
+            Arrays.sort(rules);
+            for(Object ruleObj : rules){
+                RuleG rule = (RuleG) ruleObj;
+                mooc_nodes req=new mooc_nodes();
+            }
+        }
+    }
+
+    public String judge(Integer projectId){
+       for (ProjectEnums e:ProjectEnums.values()){
+           if (projectId.equals(e.getProjectId())){
+               return e.getProjectName();
+           }
+       }
+       return null;
+    }
     /**
      * 控制台打印算法的执行结束时间
      * 占用内存等信息

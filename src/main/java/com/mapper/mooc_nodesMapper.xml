@@ -5,7 +5,8 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="projectid" jdbcType="VARCHAR" property="projectid" />
     <result column="projectname" jdbcType="VARCHAR" property="projectname" />
-    <result column="count" jdbcType="VARCHAR" property="count" />
+    <result column="projectcount" jdbcType="INTEGER" property="projectcount" />
+    <result column="catycray" jdbcType="INTEGER" property="catycray" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from mooc_nodes
@@ -13,24 +14,25 @@
   </delete>
   <insert id="insert" parameterType="com.model.mooc_nodes">
     insert into mooc_nodes (id, projectid, projectname, 
-      count)
+      projectcount, catycray)
     values (#{id,jdbcType=INTEGER}, #{projectid,jdbcType=VARCHAR}, #{projectname,jdbcType=VARCHAR}, 
-      #{count,jdbcType=VARCHAR})
+      #{projectcount,jdbcType=INTEGER}, #{catycray,jdbcType=INTEGER})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.model.mooc_nodes">
     update mooc_nodes
     set projectid = #{projectid,jdbcType=VARCHAR},
       projectname = #{projectname,jdbcType=VARCHAR},
-      count = #{count,jdbcType=VARCHAR}
+      projectcount = #{projectcount,jdbcType=INTEGER},
+      catycray = #{catycray,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select id, projectid, projectname, count
+    select id, projectid, projectname, projectcount, catycray
     from mooc_nodes
     where id = #{id,jdbcType=INTEGER}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
-    select id, projectid, projectname, count
+    select id, projectid, projectname, projectcount, catycray
     from mooc_nodes
   </select>
 </mapper>
