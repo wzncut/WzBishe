@@ -39,4 +39,7 @@
     select id, sources, target, sup, conf, catycray
     from mooc_visual
   </select>
+  <update id="init">
+    truncate table mooc_visual
+</update>
 </mapper>

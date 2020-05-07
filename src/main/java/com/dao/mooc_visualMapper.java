@@ -13,4 +13,6 @@ public interface mooc_visualMapper {
     List<mooc_visual> selectAll();
 
     int updateByPrimaryKey(mooc_visual record);
+
+    void init();
 }

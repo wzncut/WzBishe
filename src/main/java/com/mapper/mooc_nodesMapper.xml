@@ -35,4 +35,8 @@
     select id, projectid, projectname, projectcount, catycray
     from mooc_nodes
   </select>
+  <update id="init">
+    truncate table mooc_nodes
+</update>
+
 </mapper>

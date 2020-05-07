@@ -13,4 +13,6 @@ public interface mooc_nodesMapper {
     List<mooc_nodes> selectAll();
 
     int updateByPrimaryKey(mooc_nodes record);
+
+    void init();
 }

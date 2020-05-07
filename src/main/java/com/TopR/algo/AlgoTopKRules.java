@@ -69,11 +69,11 @@ public class AlgoTopKRules {
     /**
      * 启始项最大数量
      */
-    int maxAntecedentSize = 1;
+    int maxAntecedentSize = 10;
     /**
      * 结束项最大数量
      */
-    int maxConsequentSize = 1;
+    int maxConsequentSize = 10;
 
     /**
      * 一共有几条数据
@@ -85,14 +85,14 @@ public class AlgoTopKRules {
      */
     double thisLift=0.1;
 
-    double minLift=10;
+    double minLift=0;
     public AlgoTopKRules() {
     }
 
     /**
     算法开始
      */
-    public void runAlgorithm(int k, double minConfidence, Database database,Map<Integer,BitSet[]> count,int i) {
+    public void runAlgorithm(int k, int minsuppRelative,double minConfidence,double minLift, Database database,Map<Integer,BitSet[]> count,int i) {
         MemoryLogger.getInstance().reset();
         maxCandidateCount = 0;
 
@@ -101,7 +101,8 @@ public class AlgoTopKRules {
         this.k = k;
 
         this.itemsnum=database.tidsCount;
-        this.minsuppRelative = 1;
+        this.minsuppRelative = minsuppRelative;
+        this.minLift=minLift;
         tableItemTids = new BitSet[database.maxItem + 1];
         tableItemCount = new int[database.maxItem + 1];
 
@@ -118,7 +119,7 @@ public class AlgoTopKRules {
             //扫描数据库存入数据结构
             scanDatabase(database);
             //TODO 测试算法性能注释掉下行
-            count.put(i,tableItemTids);
+//            count.put(i,tableItemTids);
             //主算法逻辑
             start();
         }
@@ -544,6 +545,14 @@ public class AlgoTopKRules {
         }
     }
 
+    public void initDB(){
+        SqlSession sqlSeesion= MybatisUtils.getSqlSession();
+        mooc_nodesMapper moocnodesMapper = sqlSeesion.getMapper(mooc_nodesMapper.class);
+        mooc_visualMapper moocVisualMapper = sqlSeesion.getMapper(mooc_visualMapper.class);
+        moocnodesMapper.init();
+        moocVisualMapper.init();
+        sqlSeesion.close();
+    }
     public void insertVisual(int group){
         SqlSession sqlSeesion= MybatisUtils.getSqlSession();
         mooc_visualMapper moocVisualMapper = sqlSeesion.getMapper(mooc_visualMapper.class);
