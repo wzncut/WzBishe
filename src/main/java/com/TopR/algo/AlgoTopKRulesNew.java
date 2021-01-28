@@ -20,7 +20,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.Map.Entry;
 
-public class AlgoTopKRules {
+public class AlgoTopKRulesNew {
     /**
      * 程序开始时间
      */
@@ -86,7 +86,7 @@ public class AlgoTopKRules {
     double thisLift=0.1;
 
     double minLift=0;
-    public AlgoTopKRules() {
+    public AlgoTopKRulesNew() {
     }
 
     /**
@@ -119,7 +119,7 @@ public class AlgoTopKRules {
             //扫描数据库存入数据结构
             scanDatabase(database);
             //TODO 测试算法性能注释掉下行
-//            count.put(i,tableItemTids);
+            count.put(i,tableItemTids);
             //主算法逻辑
             start();
         }
