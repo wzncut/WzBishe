@@ -160,7 +160,7 @@ public class AlgoTopKRulesNew {
                 }
             }
         }
-
+        System.out.println(candidates+"\n");
 //        findRule(candidates);
         while (candidates.size() > 0) {
             RuleG rule = candidates.poll();

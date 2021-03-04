@@ -21,6 +21,8 @@ public class MainTopKRules {
         int minLift=1;
         Map<Integer,BitSet[]> count = new HashMap<>();
         AlgoTopKRulesNew algo = new AlgoTopKRulesNew();
+        System.out.println("----------------初始化数据库----------------");
+        algo.initDB();
         for (int i=0;i<8;i++) {
             Database database = new Database();
             database.loadFile(fileToPath("/groupOutPut" + i + ".txt"));
@@ -34,9 +36,11 @@ public class MainTopKRules {
             //algo.writeResultTofile(".//SALES1RE.txt");
             System.out.println("-------------------写入文件完毕-------------------");
             System.out.println("-------------------写入数据库-------------------");
-       //     algo.insertVisual(i);
+            //存储边
+            algo.insertVisual(i);
             System.out.println("-------------------写入数据库完毕-------------------");
         }
+        //存储节点
         CountTools countTools =new CountTools();
         countTools.countNodes(count);
         System.out.println("over");
