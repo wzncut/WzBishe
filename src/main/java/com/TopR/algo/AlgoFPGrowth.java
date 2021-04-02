@@ -132,8 +132,8 @@ public class AlgoFPGrowth {
 
 		// convert the minimum support as percentage to a
 		// relative minimum support
-		this.minSupportRelative = (int) Math.ceil(minsupp * transactionCount);
-		
+		//this.minSupportRelative = (int) Math.ceil(minsupp * transactionCount);
+		this.minSupportRelative = (int) minsupp;
 		// (2) Scan the database again to build the initial FP-Tree
 		// Before inserting a transaction in the FPTree, we sort the items
 		// by descending order of support.  We ignore items that
@@ -369,7 +369,7 @@ public class AlgoFPGrowth {
 	 * This method saves all combinations of a prefix path if it has enough support
 	 * @param prefix the current prefix
 	 * @param prefixLength the current prefix length
-	 * @param prefixPath the prefix path
+	 * @param fpNodeTempBuffer the prefix path
 	 * @throws IOException if exception while writting to output file
 	 */
 	private void saveAllCombinationsOfPrefixPath(FPNode[] fpNodeTempBuffer, int position, 

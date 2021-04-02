@@ -20,16 +20,16 @@ public class MainPGrowth {
 
 	public static void main(String [] arg) throws FileNotFoundException, IOException{
 		// Loading the binary context
-		String input = fileToPath("/groupOutPut0.txt");
+		String input = fileToPath("/sales1.txt");
 		
 		// By changing the following lines to some other values
 		// it is possible to restrict the number of items in the antecedent and
 		// consequent of rules
-		int maxConsequentLength = 100;
-		int maxAntecedentLength = 100;
+		int maxConsequentLength = 1;
+		int maxAntecedentLength = 1;
 		
 		// STEP 1: Applying the FP-GROWTH algorithm to find frequent itemsets
-		double minsup = 0.1;
+		double minsup = 2;
 		AlgoFPGrowth fpgrowth = new AlgoFPGrowth();
 		fpgrowth.setMaximumPatternLength(maxAntecedentLength + maxConsequentLength);
 		Itemsets patterns = fpgrowth.runAlgorithm(input, null, minsup);
@@ -49,7 +49,7 @@ public class MainPGrowth {
 		AssocRules rules = algoAgrawal.runAlgorithm(patterns, null, databaseSize, minconf);
 		rules.printRules(databaseSize);
 		System.out.println("DATABASE SIZE " + databaseSize);
-
+		algoAgrawal.printStats();
 	}
 	
 	public static String fileToPath(String filename) throws UnsupportedEncodingException{

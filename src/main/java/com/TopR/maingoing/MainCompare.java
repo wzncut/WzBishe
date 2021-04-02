@@ -28,14 +28,13 @@ public class MainCompare {
         algo.runAlgorithm(k, minsup,minConf,minLift, database1,count,0);
         System.out.println("-------------------新算法运行完毕-------------------");
         algo.printStats();
-        System.out.println("over");
-        Database database2 =new Database();
-        database2.loadFile(fileToPath("/sales1.txt"));
-        System.out.println("-------------------原算法运行中-------------------");
-        algoTopK.runAlgorithm(k,minConf,database2);
-        System.out.println("-------------------原算法运行完毕-------------------");
-        algoTopK.printStats();
-        System.out.println("over");
+//        Database database2 =new Database();
+//        database2.loadFile(fileToPath("/sales1.txt"));
+//        System.out.println("-------------------原算法运行中-------------------");
+//        algoTopK.runAlgorithm(k,minConf,database2);
+//        System.out.println("-------------------原算法运行完毕-------------------");
+//        algoTopK.printStats();
+//        System.out.println("over");
     }
 
     public static String fileToPath(String filename) throws UnsupportedEncodingException {
