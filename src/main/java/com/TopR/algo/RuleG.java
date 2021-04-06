@@ -22,12 +22,12 @@ public class RuleG implements Comparable<RuleG>{
     public BitSet common;
 
     /*
-     * 左项集最大数量
+     * 左项集最大数
      */
     public int maxLeft;
 
     /*
-     * 右项集最大数量
+     * 右项集最大数
      */
     public int maxRight;
 

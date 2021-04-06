@@ -15,7 +15,7 @@ public class MainCompare {
         int k = 50;
         //平均130
         int minsup=2;
-        double minConf = 0.4; //
+        double minConf = 0.5; //
         int minLift=1;
         Map<Integer, BitSet[]> count = new HashMap<>();
         AlgoTopKRulesNew algo = new AlgoTopKRulesNew();

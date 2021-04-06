@@ -523,6 +523,15 @@ public class AlgoTopKRulesNew {
         }
     }
 
+    public void initDB(){
+        SqlSession sqlSeesion= MybatisUtils.getSqlSession();
+        mooc_nodesMapper moocnodesMapper = sqlSeesion.getMapper(mooc_nodesMapper.class);
+        mooc_visualMapper moocVisualMapper = sqlSeesion.getMapper(mooc_visualMapper.class);
+        moocnodesMapper.init();
+        moocVisualMapper.init();
+        sqlSeesion.close();
+    }
+
     /**
      * 扫描数据集
      * 保存在内存中
@@ -543,15 +552,6 @@ public class AlgoTopKRulesNew {
                 tableItemCount[item] = tableItemCount[item] + 1;
             }
         }
-    }
-
-    public void initDB(){
-        SqlSession sqlSeesion= MybatisUtils.getSqlSession();
-        mooc_nodesMapper moocnodesMapper = sqlSeesion.getMapper(mooc_nodesMapper.class);
-        mooc_visualMapper moocVisualMapper = sqlSeesion.getMapper(mooc_visualMapper.class);
-        moocnodesMapper.init();
-        moocVisualMapper.init();
-        sqlSeesion.close();
     }
     public void insertVisual(int group){
         SqlSession sqlSeesion= MybatisUtils.getSqlSession();
