@@ -285,6 +285,7 @@ public class AlgoTopKRulesNew {
                     iter.remove();
                     continue;
                 }
+                //此方法检查项“item”是否在项集“itemset”中。
                 if (item > ruleG.maxLeft && !containsLEX(ruleG.getItemset2(), item, ruleG.maxRight)) {
                     BitSet tidsItem = mapCountLeft.get(item);
                     if (tidsItem == null) {
@@ -304,45 +305,46 @@ public class AlgoTopKRulesNew {
             }
         }
 
-        // for each item c found in the previous step, we create a rule
-        // I  ==> J U {c} if the support is enough
+        //
+        // 创建规则
+        // 扩展I  ==> J U {c} ，并且满足最小支持度的规则
         if(ruleG.getItemset2().length < maxConsequentSize){
             for (Entry<Integer, BitSet> entry : mapCountRight.entrySet()) {
                 BitSet tidsRule = entry.getValue();
                 int ruleSupport = tidsRule.cardinality();
 
-                // if the support is enough
+                // 判断支持度
                 if (ruleSupport >= minsuppRelative) {
                     Integer itemC = entry.getKey();
 
-                    // create new right part of rule
+                    // 创建新的规则的右项集
                     Integer[] newRightItemset = new Integer[ruleG.getItemset2().length + 1];
                     System.arraycopy(ruleG.getItemset2(), 0, newRightItemset, 0,
                             ruleG.getItemset2().length);
                     newRightItemset[ruleG.getItemset2().length] = itemC;
 
-                    // recompute maxRight
+                    // 重新给maxRight赋值
                     int maxRight = (itemC >= ruleG.maxRight) ? itemC
                             : ruleG.maxRight;
 
-                    // calculate the confidence of the rule
+                    // 计算置信度
                     double confidence = ((double) ruleSupport)
                             / ruleG.tids1.cardinality();
 
-                    // create the rule
+                    // 创建规则
                     RuleG candidate = new RuleG(ruleG.getItemset1(),
                             newRightItemset, ruleSupport, ruleG.tids1, tidsRule,
                             ruleG.maxLeft, maxRight);
 
-                    // if the confidence is enough
+                    // 置信度和相关系数满足
                     if (confidence >= minConfidence) {
-                        // save the rule in current top-k rules
+                        // save
                         thisLift =confidence/(ruleSupport/(double) itemsnum);
                         if (thisLift>minLift) {
                             save(candidate, ruleSupport);
                         }
                     }
-                    // register the rule as a candidate for future expansion
+                    // 放入候选项集以备后面扩展
                     if(candidate.getItemset2().length < maxConsequentSize){
                         thisLift =confidence/(ruleSupport/(double) itemsnum);
                         if (thisLift>minLift) {
@@ -353,14 +355,14 @@ public class AlgoTopKRulesNew {
             }
         }
 
-        // for each item c found in the previous step, we create a rule
-        // I  U {c} ==> J if the support is enough
+
+        // I  U {c} ==> J 左扩展
         if(ruleG.getItemset1().length < maxAntecedentSize){
             for (Entry<Integer, BitSet> entry : mapCountLeft.entrySet()) {
                 BitSet tidsRule = entry.getValue();
                 int ruleSupport = tidsRule.cardinality();
 
-                // if the support is enough
+                // 支持度满足
                 if (ruleSupport >= minsuppRelative) {
                     Integer itemC = entry.getKey();
 
@@ -368,25 +370,25 @@ public class AlgoTopKRulesNew {
                     BitSet tidsLeft = (BitSet) ruleG.tids1.clone();
                     tidsLeft.and(tableItemTids[itemC]);
 
-                    // create new left part of rule
+                    // 创建新的规则左项集
                     Integer[] newLeftItemset = new Integer[ruleG.getItemset1().length + 1];
                     System.arraycopy(ruleG.getItemset1(), 0, newLeftItemset, 0,
                             ruleG.getItemset1().length);
                     newLeftItemset[ruleG.getItemset1().length] = itemC;
 
-                    // recompute maxLeft
+                    // 更新左项最大值
                     int maxLeft = itemC >= ruleG.maxLeft ? itemC : ruleG.maxLeft;
 
-                    // calculate the confidence of the rule
+                    // 计算置信度
                     double confidence = ((double) ruleSupport)
                             / tidsLeft.cardinality();
 
-                    // create the rule
+                    // 创建规则
                     RuleG candidate = new RuleG(newLeftItemset,
                             ruleG.getItemset2(), ruleSupport, tidsLeft, tidsRule,
                             maxLeft, ruleG.maxRight);
 
-                    // if the confidence is high enough
+                    // 判断
                     if (confidence >= minConfidence) {
                         // save the rule to the top-k rules
                         thisLift =confidence/(ruleSupport/(double) itemsnum);
@@ -394,7 +396,7 @@ public class AlgoTopKRulesNew {
                             save(candidate, ruleSupport);
                         }
                     }
-                    // register the rule as a candidate for further expansions
+                    // 放入候选项集
                     if(candidate.getItemset1().length < maxAntecedentSize ||
                             candidate.getItemset2().length < maxConsequentSize	){
                         thisLift =confidence/(ruleSupport/(double) itemsnum);
@@ -408,7 +410,6 @@ public class AlgoTopKRulesNew {
     }
 
     /**
-     * Try to expand a rule by right expansion only.
      * @param ruleG the rule
      */
     private void expandR(RuleG ruleG) {
@@ -416,41 +417,29 @@ public class AlgoTopKRulesNew {
             return;
         }
 
-        // map to record the potential item to expand the right side of the rule
-        // Key: item   Value: bitset indicating the IDs of the transaction containing the item
-        // from the transactions containing the rule.
         Map<Integer, BitSet> mapCountRight = new HashMap<Integer, BitSet>();
 
-        // for each transaction containing the rule
         for (int tid = ruleG.common.nextSetBit(0); tid >= 0; tid = ruleG.common
                 .nextSetBit(tid + 1)) {
 
-            // iterate over the items in this transaction
             Iterator<Integer> iter = database.getTransactions().get(tid)
                     .getItems().iterator();
             while (iter.hasNext()) {
                 Integer item = iter.next();
 
-                // if  that item is not frequent, then remove it from the transaction
                 if (tableItemCount[item] < minsuppRelative) {
                     iter.remove();
                     continue;
                 }
 
-                //If the item is smaller than the largest item in the right side
-                // of the rule, we can stop this loop because items
-                // are sorted in lexicographical order.
                 if (item < ruleG.maxRight) {
                     break;
                 }
 
-                // if the item is larger than the maximum item in the right side
-                // and is not contained in the left side of the rule
                 if (item > ruleG.maxRight
                         && !containsLEX(ruleG.getItemset1(), item,
                         ruleG.maxLeft)) {
 
-                    // update the tidset of the item
                     BitSet tidsItem = mapCountRight.get(item);
                     if (tidsItem == null) {
                         tidsItem = new BitSet();
@@ -461,44 +450,33 @@ public class AlgoTopKRulesNew {
             }
         }
 
-        // for each item c found in the previous step, we create a rule
-        // I ==> J U {c} if the support is enough
         for (Entry<Integer, BitSet> entry : mapCountRight.entrySet()) {
             BitSet tidsRule = entry.getValue();
             int ruleSupport = tidsRule.cardinality();
 
-            // if the support is enough
             if (ruleSupport >= minsuppRelative) {
                 Integer itemC = entry.getKey();
 
-                // create new right part of rule
                 Integer[] newRightItemset = new Integer[ruleG.getItemset2().length + 1];
                 System.arraycopy(ruleG.getItemset2(), 0, newRightItemset, 0,
                         ruleG.getItemset2().length);
                 newRightItemset[ruleG.getItemset2().length] = itemC;
 
-                //recompute maxRight
                 int maxRight = itemC >= ruleG.maxRight ? itemC : ruleG.maxRight;
 
-                // calculate confidence
                 double confidence = ((double) ruleSupport)
                         / ruleG.tids1.cardinality();
 
-                // create the rule
                 RuleG candidate = new RuleG(ruleG.getItemset1(),
                         newRightItemset, ruleSupport, ruleG.tids1, tidsRule,
                         ruleG.maxLeft, maxRight);
 
-                // if the confidence is enough
                 if (confidence >= minConfidence) {
-                    // save the rule to the current top-k rules
-//                    save(candidate, ruleSupport);
                    thisLift = confidence / (ruleSupport / (double) itemsnum);
                     if (thisLift > minLift) {
                         save(candidate, ruleSupport);
                     }
                 }
-                // register the rule as a candidate for future expansion(s)
                 if(candidate.getItemset2().length < maxConsequentSize	){
                     thisLift =confidence/(ruleSupport/(double) itemsnum);
                     if (thisLift>minLift) {
